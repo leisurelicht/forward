@@ -20,6 +20,19 @@ type TCPArgs struct {
 	ForwardPort *int
 }
 
+type TCP struct {}
+
+func NewTCP() Service {
+	return &TCP{}
+}
+
+func (s *TCP) Run(args interface{}) (err error){
+	fmt.Printf("run: %v", args)
+	return
+}
+
+
+
 func (s *TCPArgs) Run() {
 	listen, err := net.ListenTCP(
 		s.Protocol,
