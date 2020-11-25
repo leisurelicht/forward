@@ -1,5 +1,5 @@
 package Protocol
 
 type Service interface {
-    Run(args interface{})(err error)
+	Run(args interface{}) (err error)
 }

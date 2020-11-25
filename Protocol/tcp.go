@@ -20,53 +20,49 @@ type TCPArgs struct {
 	ForwardPort *int
 }
 
-type TCP struct {}
+func NewTCPArgs() *TCPArgs {
+	return &TCPArgs{}
+}
+
+type TCP struct{}
 
 func NewTCP() Service {
 	return &TCP{}
 }
 
-func (s *TCP) Run(args interface{}) (err error){
-	fmt.Printf("run: %v", args)
-	return
+func (s *TCP) Run(args interface{}) (err error) {
+	tcpArgs := args.(*TCPArgs)
+	return tcpArgs.Server()
 }
 
-
-
-func (s *TCPArgs) Run() {
+func (s *TCPArgs) Server() (err error) {
 	listen, err := net.ListenTCP(
 		s.Protocol,
 		&net.TCPAddr{
-			net.ParseIP(*s.ListenIP),
-			*s.ListenPort,
-			"",
+			IP: net.ParseIP(*s.ListenIP), Port: *s.ListenPort,
 		})
 	if err != nil {
-		log.Println("无法监听端口:", err.Error())
+		log.Fatalf("Error to Listen Port: %s", err.Error())
 		return
 	}
 
-	log.Println("已初始化连接, 等待客户端连接")
-	s.Server(listen)
-}
-
-func (s *TCPArgs) Server(listen *net.TCPListener) {
+	log.Println("connect init succeed.")
 	for {
 		conn, err := listen.AcceptTCP()
-		defer conn.Close()
 		if err != nil {
-			log.Println("接收客户端连接异常:", err.Error())
+			log.Fatalf("Error to Accept Traffic: %s", err.Error())
 			continue
 		}
 
-		log.Println("客户端连接来自:", conn.RemoteAddr().String())
+		log.Printf("connect from: %s", conn.RemoteAddr().String())
 
 		s.Forward(conn)
 	}
+	return
 }
 
 func (s *TCPArgs) Forward(sConn net.Conn) {
-	forwardTarget := fmt.Sprintf("%s:%d", s.ForwardIP, s.ForwardPort)
+	forwardTarget := fmt.Sprintf("%s:%d", *s.ForwardIP, *s.ForwardPort)
 	tConn, err := net.Dial(s.Protocol, forwardTarget)
 	if err != nil {
 		log.Printf("Dial Error: %s", err.Error())
@@ -74,19 +70,22 @@ func (s *TCPArgs) Forward(sConn net.Conn) {
 	}
 
 	var wg sync.WaitGroup
-
+	fmt.Println("1")
 	go func(sConn net.Conn, tConn net.Conn) {
 		wg.Add(1)
 		defer wg.Done()
-		io.Copy(tConn, sConn)
+		_, _ = io.Copy(tConn, sConn)
+		log.Printf("send: %s -> %s -> %s -> %s", sConn.RemoteAddr(), sConn.LocalAddr(), tConn.RemoteAddr(), tConn.LocalAddr())
 		tConn.Close()
 	}(sConn, tConn)
 
 	go func(sConn net.Conn, tConn net.Conn) {
 		wg.Add(1)
 		defer wg.Done()
-		io.Copy(sConn, tConn)
+		_, _ = io.Copy(sConn, tConn)
+		log.Printf("accept: %s -> %s -> %s -> %s", tConn.LocalAddr(), tConn.RemoteAddr(), sConn.RemoteAddr(), sConn.LocalAddr())
 		sConn.Close()
 	}(sConn, tConn)
+
 	wg.Wait()
 }
