@@ -9,16 +9,16 @@ import (
 var ser Protocol.Service
 
 func main() {
-	args := utils.ParaseArgs()
+	param := utils.ParaseParam()
 
-	switch args.Protocol {
+	switch param.Protocol {
 	case Protocol.TCP_TYPE:
 		ser = Protocol.NewTCP()
-	//case Protocol.UDP_TYPE:
-	//	ser = Protocol.NewUDP()
+	case Protocol.UDP_TYPE:
+		ser = Protocol.NewUDP()
 	}
 
-	if err := ser.Run(args); err != nil {
+	if err := ser.Run(param); err != nil {
 		log.Println("Error:", err.Error())
 	}
 }

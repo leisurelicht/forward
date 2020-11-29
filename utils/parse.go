@@ -12,19 +12,20 @@ const (
 	Version = "0.0.1"
 )
 
-func ParaseArgs() *Protocol.TCPArgs {
-	tcpArgs := &Protocol.TCPArgs{}
+func ParaseParam() *Protocol.Param {
+	param := &Protocol.Param{}
 
 	app := kp.New("forward", "A Simple Traffic Forwarding Tools.")
 	app.Author("MuCheng").Version(Version)
+	param.ListenIP = app.Flag("listen ip", "the ip is under watch").Short('l').Default("").String()
+	param.ListenPort = app.Flag("listen port", "the port is under watch").Short('p').Required().Int()
+	param.ForwardIP = app.Flag("forward ip", "forward target ip").Short('F').Required().String()
+	param.ForwardPort = app.Flag("forward port", "forward target port").Short('P').Required().Int()
 
-	tcp := app.Command("tcp", "TCP Traffic Forward")
-	tcpArgs.ListenIP = tcp.Flag("listen ip", "the ip is under watch").Short('l').Default("").String()
-	tcpArgs.ListenPort = tcp.Flag("listen port", "the port is under watch").Short('p').Required().Int()
-	tcpArgs.ForwardIP = tcp.Flag("forward ip", "forward target ip").Short('F').Required().String()
-	tcpArgs.ForwardPort = tcp.Flag("forward port", "forward target port").Short('P').Required().Int()
+	_ = app.Command("tcp", "TCP Traffic Forward")
+	_ = app.Command("udp", "UDP Traffic Forward")
 
-	tcpArgs.Protocol = strings.ToLower(kp.MustParse(app.Parse(os.Args[1:])))
+	param.Protocol = strings.ToLower(kp.MustParse(app.Parse(os.Args[1:])))
 
-	return tcpArgs
+	return param
 }

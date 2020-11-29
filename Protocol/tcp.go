@@ -8,40 +8,28 @@ import (
 	"sync"
 )
 
-const (
-	TCP_TYPE = "tcp"
-)
-
-type TCPArgs struct {
-	Protocol    string
-	ListenIP    *string
-	ListenPort  *int
-	ForwardIP   *string
-	ForwardPort *int
-}
-
-func NewTCPArgs() *TCPArgs {
-	return &TCPArgs{}
-}
-
-type TCP struct{
-	Args *TCPArgs
+type TCP struct {
+	Protocol string
+	Param    *Param
 }
 
 func NewTCP() Service {
-	return &TCP{}
+	return &TCP{
+		Protocol: TCP_TYPE,
+	}
 }
 
 func (s *TCP) Run(args interface{}) (err error) {
-	s.Args = args.(*TCPArgs)
-	return s.Args.Server()
+	s.Param = args.(*Param)
+	return s.Server()
 }
 
-func (s *TCPArgs) Server() (err error) {
+func (s *TCP) Server() (err error) {
 	listen, err := net.ListenTCP(
-		s.Protocol,
+		s.Param.Protocol,
 		&net.TCPAddr{
-			IP: net.ParseIP(*s.ListenIP), Port: *s.ListenPort,
+			IP:   net.ParseIP(*s.Param.ListenIP),
+			Port: *s.Param.ListenPort,
 		})
 	if err != nil {
 		log.Fatalf("Error to Listen Port: %s", err.Error())
@@ -63,9 +51,9 @@ func (s *TCPArgs) Server() (err error) {
 	return
 }
 
-func (s *TCPArgs) Forward(sConn net.Conn) {
-	forwardTarget := fmt.Sprintf("%s:%d", *s.ForwardIP, *s.ForwardPort)
-	tConn, err := net.Dial(s.Protocol, forwardTarget)
+func (s *TCP) Forward(sConn net.Conn) {
+	forwardTarget := fmt.Sprintf("%s:%d", *s.Param.ForwardIP, *s.Param.ForwardPort)
+	tConn, err := net.Dial(s.Param.Protocol, forwardTarget)
 	if err != nil {
 		log.Printf("Dial Error: %s", err.Error())
 		return
