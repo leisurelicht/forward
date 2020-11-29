@@ -24,15 +24,17 @@ func NewTCPArgs() *TCPArgs {
 	return &TCPArgs{}
 }
 
-type TCP struct{}
+type TCP struct{
+	Args *TCPArgs
+}
 
 func NewTCP() Service {
 	return &TCP{}
 }
 
 func (s *TCP) Run(args interface{}) (err error) {
-	tcpArgs := args.(*TCPArgs)
-	return tcpArgs.Server()
+	s.Args = args.(*TCPArgs)
+	return s.Args.Server()
 }
 
 func (s *TCPArgs) Server() (err error) {
@@ -70,7 +72,6 @@ func (s *TCPArgs) Forward(sConn net.Conn) {
 	}
 
 	var wg sync.WaitGroup
-	fmt.Println("1")
 	go func(sConn net.Conn, tConn net.Conn) {
 		wg.Add(1)
 		defer wg.Done()
