@@ -36,7 +36,7 @@ func (s *TCP) Server() (err error) {
 		return
 	}
 
-	log.Println("connect init succeed.")
+	log.Println("Connect Init Succeed.")
 	for {
 		conn, err := listen.AcceptTCP()
 		if err != nil {
@@ -44,7 +44,7 @@ func (s *TCP) Server() (err error) {
 			continue
 		}
 
-		log.Printf("connect from: %s", conn.RemoteAddr().String())
+		log.Printf("Connect from: %s", conn.RemoteAddr().String())
 
 		s.Forward(conn)
 	}

@@ -1,10 +1,9 @@
 package Protocol
 
 import (
-    "fmt"
-    "log"
-    "net"
-    "os"
+	"fmt"
+	"log"
+	"net"
 )
 
 type UDP struct {
@@ -36,17 +35,16 @@ func (s *UDP) Server() error {
 		return err
 	}
 
-	log.Println("connect init succeed.")
+	log.Println("Connect Init Succeed.")
 
 
 	for {
         data := make([]byte, 1024)
-        n, remoteAddr, err := conn.ReadFromUDP(data)
+        _, _, err := conn.ReadFromUDP(data)
         if err != nil {
             fmt.Println("failed to read UDP msg because of ", err.Error())
             return err
         }
-        fmt.Println(n, remoteAddr)
 
         s.Forward(data)
     }
@@ -59,21 +57,18 @@ func (s *UDP) Forward(data []byte) {
 	forwardTarget := fmt.Sprintf("%s:%d", *s.Param.ForwardIP, *s.Param.ForwardPort)
 	addr, err := net.ResolveUDPAddr("udp", forwardTarget)
 	if err != nil {
-		fmt.Println("Can't resolve address: ", err)
-		os.Exit(1)
+		log.Fatalf("Can't resolve address: ", err)
 	}
 
 	tConn, err := net.DialUDP("udp", nil, addr)
 	if err != nil {
-		fmt.Println("Can't dial: ", err)
-		os.Exit(1)
+		log.Fatalf("Dial Error: ", err)
 	}
 	defer tConn.Close()
 
     _, err = tConn.Write(data)
     if err != nil {
-        fmt.Println("failed:", err)
-        os.Exit(1)
+        log.Fatalf("Forward Traffic Error: %s", err.Error())
     }
 
 }
