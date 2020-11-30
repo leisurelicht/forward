@@ -13,14 +13,14 @@ type TCP struct {
 	Param    *Param
 }
 
-func NewTCP() Service {
+func NewTCP(param *Param) Server {
 	return &TCP{
 		Protocol: TCP_TYPE,
+		Param: param,
 	}
 }
 
-func (s *TCP) Run(args interface{}) (err error) {
-	s.Param = args.(*Param)
+func (s *TCP) Run() (err error) {
 	return s.Server()
 }
 

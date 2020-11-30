@@ -11,16 +11,15 @@ type UDP struct {
 	Param    *Param
 }
 
-func NewUDP() Service {
+func NewUDP(param *Param) Server {
 	return &UDP{
 		Protocol: UDP_TYPE,
+		Param: param,
 	}
 }
 
-func (s *UDP) Run(args interface{}) error {
-	s.Param = args.(*Param)
+func (s *UDP) Run() error {
 	return s.Server()
-
 }
 
 func (s *UDP) Server() error {
