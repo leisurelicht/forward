@@ -39,5 +39,5 @@ func handlerRequest(conn net.Conn) {
 
 	if _, err := io.Copy(conn, conn); err != nil {
 	    log.Printf("Data Copy Error: %s", err)
-    }
+   }
 }
