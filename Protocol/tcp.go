@@ -1,4 +1,4 @@
-package Protocol
+package protocol
 
 import (
 	"fmt"
@@ -8,23 +8,29 @@ import (
 	"sync"
 )
 
+// TCP TCP转发服务所需参数结构体
 type TCP struct {
-	Protocol string
 	Param    *Param
 }
 
+// NewTCP 创建TCP参数结构体
 func NewTCP(param *Param) Server {
 	return &TCP{
-		Protocol: TCPType,
 		Param:    param,
 	}
 }
 
-func (s *TCP) Run() (err error) {
-	return s.Server()
+// Stop 停止TCP转发服务
+func (s *TCP) Stop() error {
+	return nil
 }
 
-func (s *TCP) Server() (err error) {
+// Run 开始TCP转发服务
+func (s *TCP) Run() (err error) {
+	return s.server()
+}
+
+func (s *TCP) server() (err error) {
 	listen, err := net.ListenTCP(
 		s.Param.Protocol,
 		&net.TCPAddr{
@@ -46,12 +52,12 @@ func (s *TCP) Server() (err error) {
 
 		log.Printf("Connect from: %s", conn.RemoteAddr().String())
 
-		s.Forward(conn)
+		s.forward(conn)
 	}
 	return
 }
 
-func (s *TCP) Forward(sConn net.Conn) {
+func (s *TCP) forward(sConn net.Conn) {
 	forwardTarget := fmt.Sprintf("%s:%d", *s.Param.ForwardIP, *s.Param.ForwardPort)
 	tConn, err := net.Dial(s.Param.Protocol, forwardTarget)
 	if err != nil {

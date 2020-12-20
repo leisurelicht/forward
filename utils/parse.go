@@ -1,19 +1,22 @@
 package utils
 
 import (
-	"github.com/leisurelicht/forward/Protocol"
 	"os"
 	"strings"
+
+	"github.com/leisurelicht/forward/Protocol"
 
 	kp "gopkg.in/alecthomas/kingpin.v2"
 )
 
 const (
+	// Version 版本号
 	Version = "0.0.1"
 )
 
-func ParaseParam() *Protocol.Param {
-	param := &Protocol.Param{}
+// ParaseParam 收集命令行参数
+func ParaseParam() *protocol.Param {
+	param := protocol.NewParam()
 
 	app := kp.New("forward", "A Simple Traffic Forwarding Tools.")
 	app.Author("MuCheng").Version(Version)
