@@ -10,9 +10,9 @@ type Server interface {
 
 func NewServer(param *Param) (ser Server) {
 	switch param.Protocol{
-	case TCP_TYPE:
+	case TCPType:
 		ser = NewTCP(param)
-	case UDP_TYPE:
+	case UDPType:
 		ser = NewUDP(param)
 	default:
 		log.Fatal("Error: Unknown Protocol")

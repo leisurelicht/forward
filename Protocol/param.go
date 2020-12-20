@@ -1,8 +1,8 @@
 package Protocol
 
 const (
-	TCP_TYPE = "tcp"
-	UDP_TYPE = "udp"
+	TCPType = "tcp"
+	UDPType = "udp"
 )
 
 type Param struct {

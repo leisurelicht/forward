@@ -15,8 +15,8 @@ type TCP struct {
 
 func NewTCP(param *Param) Server {
 	return &TCP{
-		Protocol: TCP_TYPE,
-		Param: param,
+		Protocol: TCPType,
+		Param:    param,
 	}
 }
 

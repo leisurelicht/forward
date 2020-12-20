@@ -13,8 +13,8 @@ type UDP struct {
 
 func NewUDP(param *Param) Server {
 	return &UDP{
-		Protocol: UDP_TYPE,
-		Param: param,
+		Protocol: UDPType,
+		Param:    param,
 	}
 }
 
