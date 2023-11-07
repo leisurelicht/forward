@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/leisurelicht/forward/protocol"
-	"github.com/leisurelicht/forward/utils"
 	"log"
+
+	"github.com/leisurelicht/forward/protocol"
 )
 
 func main() {
-	param := utils.ParaseParam()
+	param := protocol.ParaseParam()
 	server := protocol.NewServer(param)
 	if err := server.Run(); err != nil {
 		log.Println("Error:", err.Error())

@@ -10,13 +10,13 @@ import (
 
 // TCP TCP转发服务所需参数结构体
 type TCP struct {
-	Param    *Param
+	Param *Param
 }
 
 // NewTCP 创建TCP参数结构体
 func NewTCP(param *Param) Server {
 	return &TCP{
-		Param:    param,
+		Param: param,
 	}
 }
 
@@ -54,7 +54,6 @@ func (s *TCP) server() (err error) {
 
 		s.forward(conn)
 	}
-	return
 }
 
 func (s *TCP) forward(sConn net.Conn) {
@@ -66,16 +65,16 @@ func (s *TCP) forward(sConn net.Conn) {
 	}
 
 	var wg sync.WaitGroup
+	wg.Add(1)
 	go func(sConn net.Conn, tConn net.Conn) {
-		wg.Add(1)
 		defer wg.Done()
 		_, _ = io.Copy(tConn, sConn)
 		log.Printf("send: %s -> %s -> %s -> %s", sConn.RemoteAddr(), sConn.LocalAddr(), tConn.RemoteAddr(), tConn.LocalAddr())
 		tConn.Close()
 	}(sConn, tConn)
 
+	wg.Add(1)
 	go func(sConn net.Conn, tConn net.Conn) {
-		wg.Add(1)
 		defer wg.Done()
 		_, _ = io.Copy(sConn, tConn)
 		log.Printf("accept: %s -> %s -> %s -> %s", tConn.LocalAddr(), tConn.RemoteAddr(), sConn.RemoteAddr(), sConn.LocalAddr())

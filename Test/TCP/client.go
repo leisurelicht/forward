@@ -40,7 +40,7 @@ func handleWrite(conn net.Conn) {
 	buf := make([]byte, 10)
 	for {
 		// 获取键盘输入。 fmt.Scan --》 结束标记 \n 和 空格
-		n, err := os.Stdin.Read(buf)            // buf[:n]
+		n, err := os.Stdin.Read(buf) // buf[:n]
 		if err != nil {
 			fmt.Println("os.Stdin.Read err:", err)
 			return
@@ -118,7 +118,7 @@ func receiveMsg(conn net.Conn) (result string, err error) {
 	return string(respByteBuf), nil
 }
 
-//整形转换成字节
+// 整形转换成字节
 func IntToBytes(n int) []byte {
 	x := int64(n)
 
@@ -127,7 +127,7 @@ func IntToBytes(n int) []byte {
 	return bytesBuffer.Bytes()
 }
 
-//字节转换成整形
+// 字节转换成整形
 func BytesToInt(b []byte) int {
 	bytesBuffer := bytes.NewBuffer(b)
 

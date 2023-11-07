@@ -8,13 +8,13 @@ import (
 
 // UDP UDP转发服务所需参数结构体
 type UDP struct {
-	Param    *Param
+	Param *Param
 }
 
 // NewUDP 创建UDP参数结构体
 func NewUDP(param *Param) Server {
 	return &UDP{
-		Param:    param,
+		Param: param,
 	}
 }
 
@@ -52,20 +52,18 @@ func (s *UDP) server() error {
 
 		s.forward(data)
 	}
-
-	return nil
 }
 
 func (s *UDP) forward(data []byte) {
 	forwardTarget := fmt.Sprintf("%s:%d", *s.Param.ForwardIP, *s.Param.ForwardPort)
 	addr, err := net.ResolveUDPAddr("udp", forwardTarget)
 	if err != nil {
-		log.Fatalf("Can't resolve address: ", err)
+		log.Fatalf("Can't resolve address: %s\n", err)
 	}
 
 	tConn, err := net.DialUDP("udp", nil, addr)
 	if err != nil {
-		log.Fatalf("Dial Error: ", err)
+		log.Fatalf("Dial Error: %s\n", err)
 	}
 	defer tConn.Close()
 
@@ -73,5 +71,4 @@ func (s *UDP) forward(data []byte) {
 	if err != nil {
 		log.Fatalf("Forward Traffic Error: %s", err.Error())
 	}
-
 }

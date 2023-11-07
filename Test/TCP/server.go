@@ -1,10 +1,10 @@
 package main
 
 import (
-    "flag"
-    "io"
-    "log"
-    "net"
+	"flag"
+	"io"
+	"log"
+	"net"
 )
 
 var listenAddr = flag.String("listenAddr", ":666", "listen Addr")
@@ -38,6 +38,6 @@ func handlerRequest(conn net.Conn) {
 	log.Printf("Received message: %s -> %s \n", conn.RemoteAddr(), conn.LocalAddr())
 
 	if _, err := io.Copy(conn, conn); err != nil {
-	    log.Printf("Data Copy Error: %s", err)
-   }
+		log.Printf("Data Copy Error: %s", err)
+	}
 }
